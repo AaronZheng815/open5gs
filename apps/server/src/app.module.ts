@@ -8,6 +8,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { SubscriberModule } from './modules/subscriber/subscriber.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { AccountModule } from './modules/account/account.module';
+import { AssetModule } from './modules/asset/asset.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { AccountModule } from './modules/account/account.module';
     SubscriberModule,
     ProfileModule,
     AccountModule,
+    AssetModule,
   ],
   controllers: [AppController],
   providers: [AppService],
