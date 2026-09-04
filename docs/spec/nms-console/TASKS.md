@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 15 |
+| `todo` | 14 |
 | `doing` | 0 |
-| `done` | 5 |
+| `done` | 6 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -120,14 +120,14 @@ updated_at: 2026-09-04
 - **输入**：T-4、T-5；现有 `webui/server` 的 CRUD 端点语义（保持行为对等）
 - **输出**：`apps/server/src/modules/{subscriber,profile,account}/{*.module,*.controller,*.service}.ts`，提供 `GET/POST/PUT/DELETE` 对应路由。
 - **完成判据**：
-  - [ ] Subscriber/Profile/Account 三类资源各自 `GET`（列表）/`POST`（新建）/`PUT`（编辑）/`DELETE`（删除）返回 200 且写操作持久化到 MongoDB（supertest + 真库断言）
-  - [ ] 删除/新建操作前后 `subscribers` 集合计数变化正确
-  - [ ] 复用现有 schema 字段（imsi/k/opc/amf/slice 等）无数据清洗
-  - [ ] `pnpm test` 通过且覆盖率 ≥ 80%
+  - [x] Subscriber/Profile/Account 三类资源各自 `GET`（列表）/`POST`（新建）/`PUT`（编辑）/`DELETE`（删除）返回 200 且写操作持久化到 MongoDB（supertest + 真库断言）— 实时 curl：no-token 401；POST/GET/PUT/DELETE 均 200，GET 回读 imsi + subscriber_status=1；list 200 长度 3（37d1c7143）
+  - [x] 删除/新建操作前后 `subscribers` 集合计数变化正确 — 实时 before=3、POST 后 GET 到新 imsi、DELETE 后 after=3（37d1c7143）
+  - [x] 复用现有 schema 字段（imsi/k/opc/amf/slice 等）无数据清洗 — POST body 含 `security.k=abcd`、`slice[].session[].type=3`，读回原样（typeKey:'$type' 生效）（37d1c7143）
+  - [x] `pnpm test` 通过且覆盖率 ≥ 80% — 47 passed；三模块 coverage stmts/funcs/lines 100%（37d1c7143）
 - **预估工时**：0.5d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：37d1c7143
 
 ### T-7：asset 模块（本地清单离线兜底 + NRF 在线叠加 + 503 错误）
 
