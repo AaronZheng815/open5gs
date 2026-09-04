@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 7 |
+| `todo` | 6 |
 | `doing` | 0 |
-| `done` | 13 |
+| `done` | 14 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -246,13 +246,13 @@ updated_at: 2026-09-04
 - **输入**：T-13、T-7
 - **输出**：`apps/web/src/pages/assets/assets-page.tsx`（+ 状态列/差值列/告警 Alert）、`apps/web/src/hooks/useNfs.ts`。
 - **完成判据**：
-  - [ ] 资产表格渲染通过 `GET /api/nfs` 的数据（在线/离线/差值列正确）
-  - [ ] 模拟后端 503（NRF 不可达）时页面显示 Alert 告警而非白屏/未捕获异常
-  - [ ] `pnpm test`（渲染 + 错误态）通过；`pnpm build` 成功
+  - [x] 资产表格渲染通过 `GET /api/nfs` 的数据（在线/离线/差值列正确） — live：`/api/nfs` 经 Vite 代理 200，nrf online、其余离线+expected（驱动差值列）；页面测试断言 类型/角色/地址/在线 列的 'amf/接入与移动性管理/127.0.0.5' 与 '预期缺失' Tag（367cd18b4）
+  - [x] 模拟后端 503（NRF 不可达）时页面显示 Alert 告警而非白屏/未捕获异常 — 页面测试 `isError=true` → Alert 含 'NRF 不可达'；hook 测试 mockRejectedValue → isError 含 'NRF 不可达'（367cd18b4）
+  - [x] `pnpm test`（渲染 + 错误态）通过；`pnpm build` 成功 — vitest 6 suites/12 passed（hook 2 + 页面 2）；build tsc+vite 成功；lint 0（367cd18b4）
 - **预估工时**：0.5d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：367cd18b4
 
 ### T-15：前端配置页（查看/编辑/diff/dry-run）
 
