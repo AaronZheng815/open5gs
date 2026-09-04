@@ -8,3 +8,9 @@ export const AuditLogSchema = z.object({
   ts: z.string().datetime(),
 });
 export type AuditLog = z.infer<typeof AuditLogSchema>;
+
+export const AuditLogListSchema = z.object({
+  items: z.array(AuditLogSchema),
+  total: z.number().int().nonnegative(),
+});
+export type AuditLogList = z.infer<typeof AuditLogListSchema>;

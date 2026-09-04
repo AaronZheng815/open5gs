@@ -24,6 +24,7 @@ interface ModelMock {
   findOneAndUpdate: jest.Mock<QueryLike>;
   findByIdAndUpdate: jest.Mock<QueryLike>;
   deleteOne: jest.Mock<unknown>;
+  countDocuments: jest.Mock<QueryLike>;
   create: jest.Mock<Promise<{ toObject: () => unknown }>>;
 }
 
@@ -47,6 +48,7 @@ function makeModel(): ModelMock {
     findOneAndUpdate: makeQuery({ imsi: '460111234560001' }) as unknown as jest.Mock<QueryLike>,
     findByIdAndUpdate: makeQuery({ _id: 'abc' }) as unknown as jest.Mock<QueryLike>,
     deleteOne: makeQuery({ deletedCount: 1 }) as unknown as jest.Mock<QueryLike>,
+    countDocuments: makeQuery(3) as unknown as jest.Mock<QueryLike>,
     create: jest.fn(() => Promise.resolve({ toObject: () => ({ imsi: '460111234560001' }) })),
   };
 }
@@ -97,7 +99,7 @@ describe('T-4 repository CRUD 基本方法', () => {
     expect(mock.findOne).toHaveBeenCalledWith({ username: 'admin' });
   });
 
-  it('audit-log: list 带 actor 过滤 + 分页排序；append', async () => {
+  it('audit-log: list 带 actor 过滤 + 分页排序；count；append', async () => {
     const mock = makeModel();
     const repo = new AuditLogRepository(asModel<AuditLogDoc>(mock));
     await expect(repo.list()).resolves.toEqual([{ imsi: '460111234560001' }]);
@@ -106,16 +108,30 @@ describe('T-4 repository CRUD 基本方法', () => {
     expect(query.sort).toHaveBeenCalledWith({ ts: -1 });
     expect(query.skip).toHaveBeenCalledWith(10);
     expect(query.limit).toHaveBeenCalledWith(10);
+    await expect(repo.count()).resolves.toBe(3);
+    await expect(repo.count({ actor: 'admin' })).resolves.toBe(3);
+    expect(mock.countDocuments).toHaveBeenCalledWith({});
+    expect(mock.countDocuments).toHaveBeenCalledWith({ actor: 'admin' });
     await expect(repo.append({ actor: 'admin', action: 'start', target: 'amf', result: 'ok', ts: new Date() })).resolves.toEqual({ imsi: '460111234560001' });
   });
 
-  it('lifecycle-task: findLatestByNfId / create / updateStatus', async () => {
+  it('lifecycle-task: findLatestByNfId / list 分页 / count / create / updateStatus', async () => {
     const mock = makeModel();
     const repo = new LifecycleTaskRepository(asModel<LifecycleTaskDoc>(mock));
     await expect(repo.findLatestByNfId('amf-1')).resolves.toEqual([{ imsi: '460111234560001' }]);
     const query = mock.find.mock.results[0].value as QueryLike;
     expect(query.sort).toHaveBeenCalledWith({ createdAt: -1 });
     expect(query.limit).toHaveBeenCalledWith(10);
+    await expect(repo.list(2, 10, { nfId: 'amf' })).resolves.toEqual([{ imsi: '460111234560001' }]);
+    const listQuery = mock.find.mock.results[1].value as QueryLike;
+    expect(listQuery.sort).toHaveBeenCalledWith({ createdAt: -1 });
+    expect(listQuery.skip).toHaveBeenCalledWith(10);
+    expect(listQuery.limit).toHaveBeenCalledWith(10);
+    await expect(repo.list()).resolves.toEqual([{ imsi: '460111234560001' }]);
+    expect(mock.find).toHaveBeenCalledWith({ nfId: 'amf' });
+    expect(mock.find).toHaveBeenCalledWith({});
+    await expect(repo.count({ nfId: 'amf' })).resolves.toBe(3);
+    expect(mock.countDocuments).toHaveBeenCalledWith({ nfId: 'amf' });
     await expect(repo.create({ nfId: 'amf-1', action: 'start', status: 'queued', by: 'admin' })).resolves.toEqual({ imsi: '460111234560001' });
     await expect(repo.updateStatus('abc', 'running')).resolves.toEqual({ _id: 'abc' });
   });

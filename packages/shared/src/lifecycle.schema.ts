@@ -18,3 +18,9 @@ export const LifecycleTaskSchema = z.object({
   createdAt: z.string().datetime(),
 });
 export type LifecycleTask = z.infer<typeof LifecycleTaskSchema>;
+
+export const LifecycleTaskListSchema = z.object({
+  items: z.array(LifecycleTaskSchema),
+  total: z.number().int().nonnegative(),
+});
+export type LifecycleTaskList = z.infer<typeof LifecycleTaskListSchema>;
