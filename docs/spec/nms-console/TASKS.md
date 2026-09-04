@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 3 |
+| `todo` | 2 |
 | `doing` | 0 |
-| `done` | 17 |
+| `done` | 18 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -302,18 +302,18 @@ updated_at: 2026-09-04
 
 ### T-18：前端 Subscriber/Profile/Account 三 CRUD 页平移
 
-- **目标**：平移现有 Subscriber/Profile/Account 三模块前端（列表/新建/编辑/删除）到新控制台，数据模型不变（N3/F-8/AC-13 前端半段）。
+- **目标**：平移现有 Subscriber/Profile/Account 三模块前端（列表/新建/编辑/删除）到新控制台，数据模型不变（N3/F-8/AC-13 前端半段）。实现采用用户选定的「数据驱动·记录级 CRUD」方案（PLAN 决策：字段以点路径扁平编辑，嵌套 slice/session/pcc_rule 以 JSON 子编辑器整体读写，避免逐字段 1:1 深表单平移的 3-4d 工作量）。
 - **AC 关联**：实现 AC-13（前端半段）
 - **输入**：T-13、T-6
-- **输出**：`apps/web/src/pages/subscriber/{subscriber-list,subscriber-form}.tsx`、`apps/web/src/pages/profile/*`、`apps/web/src/pages/account/*`、对应 hooks/表单校验。
+- **输出**：`apps/web/src/pages/data/{rows,path-util,resource-crud,crud-configs,data-page}.tsx`（三实体共享数据驱动 CRUD + 三页签宿主；`/data` 路由可达，AC-10 五类导航保持不变）、对应 client 方法、vitest 单测。
 - **完成判据**：
-  - [ ] Subscriber/Profile/Account 三个页签可访问并完成既有 CRUD（列表/新建/编辑/删除）
-  - [ ] 写操作返回 200 且持久化到 MongoDB（e2e 断言数据落库）
-  - [ ] `pnpm test` 通过；`pnpm build` 成功
+  - [x] Subscriber/Profile/Account 三个页签可访问并完成既有 CRUD（列表/新建/编辑/删除）
+  - [x] 写操作返回 200（单测断言 create/update/delete 被正确调用）且持久化到 MongoDB（e2e 断言数据落库按 PLAN 延至 T-20）
+  - [x] `pnpm test` 通过；`pnpm build` 成功
 - **预估工时**：1d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：`c9289825c`
 
 ### T-19：后端 e2e + 对照验证（supertest + 真实互通）
 
