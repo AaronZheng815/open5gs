@@ -1,4 +1,10 @@
-import type { LoginRequest, LoginResponse, NfAssetList } from '@open5gs/shared';
+import type {
+  ConfigDiff,
+  ConfigDoc,
+  LoginRequest,
+  LoginResponse,
+  NfAssetList,
+} from '@open5gs/shared';
 import { useAuthStore } from '../store/auth-store';
 
 const BASE = '/api';
@@ -31,5 +37,14 @@ export const api = {
   },
   nfs(): Promise<NfAssetList> {
     return http<NfAssetList>('/nfs');
+  },
+  getConfig(id: string): Promise<ConfigDoc> {
+    return http<ConfigDoc>(`/nfs/${id}/config`);
+  },
+  applyConfig(id: string, content: Record<string, unknown>, dryRun: boolean): Promise<ConfigDiff> {
+    return http<ConfigDiff>(`/nfs/${id}/config${dryRun ? '?dry_run=true' : ''}`, {
+      method: 'POST',
+      body: JSON.stringify({ content }),
+    });
   },
 };
