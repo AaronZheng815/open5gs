@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 14 |
+| `todo` | 13 |
 | `doing` | 0 |
-| `done` | 6 |
+| `done` | 7 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -136,14 +136,14 @@ updated_at: 2026-09-04
 - **输入**：T-3、T-2；基线 §3/§4（16 网元地址/角色表）；EV-001、EV-005
 - **输出**：`apps/server/src/modules/asset/{asset.module,asset.controller,asset.service,inventory.loader,discovery.client}.ts`，`listNfs()`、`loadInventory()`、`resolveStatus()`。
 - **完成判据**：
-  - [ ] `GET /api/inventory` 在 NRF 未配置/不可达时仍返回 200 且 items 含 16 网元资产模型（nfType/addr/role）
-  - [ ] 配 NRF 且 NRF 可达时 `GET /api/nfs` 返回 200，已注册网元 status=`online`，未注册（预期但缺）网元带差值标记
-  - [ ] NRF 不可达时 `GET /api/nfs` 返回 503 且 body 含错误原因（不抛 500）
-  - [ ] `pnpm test`（inventory/asset 单测 + 集成）通过且覆盖率 ≥ 80%
+  - [x] `GET /api/inventory` 在 NRF 未配置/不可达时仍返回 200 且 items 含 16 网元资产模型（nfType/addr/role） — 实时 curl：HTTP 200 + total 16，每项 nfType/addr/role/status=unknown，零 NRF 依赖（db8c389bd）
+  - [x] 配 NRF 且 NRF 可达时 `GET /api/nfs` 返回 200，已注册网元 status=`online`，未注册（预期但缺）网元带差值标记 — 实时 curl：HTTP 200 + total 16；online=nrf,scp，其余 14 项 status=offline + expected:true（db8c389bd）
+  - [x] NRF 不可达时 `GET /api/nfs` 返回 503 且 body 含错误原因（不抛 500） — 实时：NRF_DISCOVERY_URL=127.0.0.10:1 重启后 HTTP 503，body `NRF 不可达：connect ECONNREFUSED 127.0.0.10:1`（db8c389bd）
+  - [x] `pnpm test`（inventory/asset 单测 + 集成）通过且覆盖率 ≥ 80% — 69 passed；asset 模块 coverage stmts 93.4 / lines 93.46；lint 0 / build 0（db8c389bd）
 - **预估工时**：1d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：db8c389bd
 
 ### T-8：config 模块（读 + diff + dry-run + 写回并备份）
 
