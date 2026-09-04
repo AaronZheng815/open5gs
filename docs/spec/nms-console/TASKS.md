@@ -104,14 +104,14 @@ updated_at: 2026-09-04
 - **输入**：T-3、T-4；SPEC §6 安全约束（Q2 授权范围）
 - **输出**：`apps/server/src/modules/auth/{auth.module,auth.controller,auth.service,jwt-auth.guard,roles.guard,current-user.decorator}.ts`，`@Roles(...)` 装饰器。
 - **完成判据**：
-  - [x] 合法凭证 `POST /api/login` 返回 200 + access_token；非法凭证返回 401 — 实时 curl：valid HTTP 200 token_len=199；wrong password HTTP 401 ProblemDetails；missing fields HTTP 400（<pending>）
-  - [x] 无 token 访问受保护路由返回 401；token 有效返回 200 — JwtAuthGuard 单测（缺失→401、verify 拒绝→401、有效→放行挂 req.user）（<pending>）
-  - [x] RolesGuard 对生命周期写操作：角色 ∈ {开发,测试,运维} 放行，否则 403 — RolesGuard 单测（dev 放行 / admin → 403 / 缺 user → 403）（<pending>）
-  - [x] `pnpm test` 通过且覆盖率 ≥ 80% — 32 passed；coverage stmts ~98.9 / lines 98.7（<pending>）
+  - [x] 合法凭证 `POST /api/login` 返回 200 + access_token；非法凭证返回 401 — 实时 curl：valid HTTP 200 token_len=199；wrong password HTTP 401 ProblemDetails；missing fields HTTP 400（f3c982ee8）
+  - [x] 无 token 访问受保护路由返回 401；token 有效返回 200 — JwtAuthGuard 单测（缺失→401、verify 拒绝→401、有效→放行挂 req.user）（f3c982ee8）
+  - [x] RolesGuard 对生命周期写操作：角色 ∈ {开发,测试,运维} 放行，否则 403 — RolesGuard 单测（dev 放行 / admin → 403 / 缺 user → 403）（f3c982ee8）
+  - [x] `pnpm test` 通过且覆盖率 ≥ 80% — 32 passed；coverage stmts ~98.9 / lines 98.7（f3c982ee8）
 - **预估工时**：0.5d
 - **责任人**：sder
 - **状态**：`done`
-- **Commit**：<pending>
+- **Commit**：f3c982ee8
 
 ### T-6：subscriber/profile/account 三模块 CRUD 后端平移
 
