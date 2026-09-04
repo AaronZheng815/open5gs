@@ -1,6 +1,10 @@
 import type {
+  AuditLogList,
   ConfigDiff,
   ConfigDoc,
+  LifecycleAction,
+  LifecycleStatus,
+  LifecycleTaskList,
   LoginRequest,
   LoginResponse,
   NfAssetList,
@@ -46,5 +50,17 @@ export const api = {
       method: 'POST',
       body: JSON.stringify({ content }),
     });
+  },
+  lifecycleStatus(id: string): Promise<LifecycleStatus> {
+    return http<LifecycleStatus>(`/nfs/${id}/lifecycle`);
+  },
+  lifecycleAction(id: string, action: LifecycleAction): Promise<{ taskId: string }> {
+    return http<{ taskId: string }>(`/nfs/${id}/lifecycle/${action}`, { method: 'POST' });
+  },
+  lifecycleTasks(nfId: string): Promise<LifecycleTaskList> {
+    return http<LifecycleTaskList>(`/lifecycle-tasks?nfId=${encodeURIComponent(nfId)}`);
+  },
+  audits(): Promise<AuditLogList> {
+    return http<AuditLogList>('/audits');
   },
 };

@@ -12,28 +12,9 @@ import {
   Typography,
 } from 'antd';
 import type { ConfigDiff, DiffLine } from '@open5gs/shared';
+import { NF_IDS } from '../../shared/nf-list';
 import { useApplyConfig, useConfig } from '../../hooks/useConfig';
 import { flattenConfig, rebuildContent } from './config-fields';
-
-/** 可管理的网元清单（与 inventory.loader 的 KNOWN_NF_TYPES 对齐）。 */
-const NF_IDS = [
-  'nrf',
-  'scp',
-  'amf',
-  'smf',
-  'upf',
-  'ausf',
-  'udm',
-  'udr',
-  'pcf',
-  'nssf',
-  'bsf',
-  'mme',
-  'hss',
-  'sgwc',
-  'sgwu',
-  'pcrf',
-];
 
 const TYPE_META: Record<DiffLine['type'], { color: string; text: string }> = {
   change: { color: 'gold', text: '修改' },
