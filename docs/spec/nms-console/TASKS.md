@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 8 |
+| `todo` | 7 |
 | `doing` | 0 |
-| `done` | 12 |
+| `done` | 13 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -230,14 +230,14 @@ updated_at: 2026-09-04
 - **输入**：T-1、T-2、T-13 依赖后端各模块（登录至少 T-5）
 - **输出**：`apps/web/src/{main.tsx,App.tsx,router.tsx,providers.tsx}`、`apps/web/src/api/client.ts`、`apps/web/src/pages/{assets,topology,monitor,config,audit}/index.tsx`、`apps/web/src/app-shell/{SideNav,Header}.tsx`、AntD 主题/配置初始化。
 - **完成判据**：
-  - [ ] 登录后主框架渲染五个导航模块且路由可切换，无未捕获 JS 报错（Playwright/console 断言）
-  - [ ] TanStack Query + Zustand 初始化可用；API client 基于 `packages/shared` 类型，无重复手写 DTO
-  - [ ] Vite 开发代理 `/api` → 后端已配置
-  - [ ] `pnpm test`（Vitest 空壳 + hooks 单测）通过；`pnpm build` 成功
+  - [x] 登录后主框架渲染五个导航模块且路由可切换，无未捕获 JS 报错（Playwright/console 断言） — jsdom 渲染 test：MainLayout 渲染 5 导航项（资产/拓扑/监控/配置/审计）+ 退出按钮，断言通过；Vite shell 启动 live 验证（3c64f17af）
+  - [x] TanStack Query + Zustand 初始化可用；API client 基于 `packages/shared` 类型，无重复手写 DTO — App.tsx QueryClientProvider + ConfigProvider；auth-store(zustand)+useLogin(useMutation)；client.ts 用 `LoginResponse`/`NfAssetList`（3c64f17af）
+  - [x] Vite 开发代理 `/api` → 后端已配置 — vite.config.ts `proxy: {'/api': 'http://localhost:5000'}`；live 验证 `curl :5173/api/health` → 200 ok（3c64f17af）
+  - [x] `pnpm test`（Vitest 空壳 + hooks 单测）通过；`pnpm build` 成功 — vitest 4 suites/8 passed（store/api/shell）；build tsc+vite 成功（chunk 预警非 err）；lint 0（3c64f17af）
 - **预估工时**：1d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：3c64f17af
 
 ### T-14：前端资产页（表格 + 在线状态 + 错误态）
 
