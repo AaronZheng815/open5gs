@@ -12,6 +12,7 @@ import { AssetModule } from './modules/asset/asset.module';
 import { ConfigModule as NmsConfigModule } from './modules/config/config.module';
 import { LifecycleModule } from './modules/lifecycle/lifecycle.module';
 import { MonitorModule } from './modules/monitor/monitor.module';
+import { TopologyModule } from './modules/topology/topology.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { MonitorModule } from './modules/monitor/monitor.module';
     NmsConfigModule,
     LifecycleModule,
     MonitorModule,
+    TopologyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
