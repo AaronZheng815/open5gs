@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 19 |
+| `todo` | 18 |
 | `doing` | 0 |
-| `done` | 1 |
+| `done` | 2 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -62,8 +62,8 @@ updated_at: 2026-09-04
   - [ ] `pnpm lint` 0 error、`pnpm test` 通过
 - **预估工时**：0.5d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：82b00e163
 
 ### T-3：NestJS 基础设施引导（Fastify 适配器 + 去代理 + 异常 + Swagger + Mongoose + 配置）
 
