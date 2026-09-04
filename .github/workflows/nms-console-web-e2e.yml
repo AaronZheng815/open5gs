@@ -1,0 +1,51 @@
+name: NMS Console Web E2E
+
+# T-20 交付：前端 Playwright 端到端（登录→五模块、资产/配置/生命周期、Subscriber CRUD 落库）。
+# 与 meson-ci.yml（Open5GS 编译/单测）和 harness-gate.yml（harness 消费门禁）相互独立；
+# 本 job 只服务 NMS Console 的 pnpm monorepo 前端。
+on:
+  push:
+    branches: [codex/nms-console]
+  pull_request:
+    branches: [master]
+
+jobs:
+  web-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      mongodb:
+        image: mongo:7
+        ports:
+          - 27017:27017
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      # pnpm 版本读取根 package.json 的 packageManager: pnpm@11.25.0
+      - uses: pnpm/action-setup@v4
+
+      # 后端 e2e（T-19）与前端 e2e 共用一个隔离库；用 --frozen-lockfile 保证 lock 一致
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 安装 chromium + 系统依赖（ubuntu-latest 直连 cdn.playwright.dev，无需内网镜像）
+      - name: Install Playwright chromium
+        run: pnpm --dir apps/web exec playwright install --with-deps chromium
+
+      # 由 playwright.config.ts 的 webServer 起后端(:5000)与前端(:5173)，
+      # global-setup 自建 admin；子进程走 proxyNeutral 清代理。
+      - name: Run web e2e
+        run: pnpm --dir apps/web exec playwright test
+
+      - name: Upload trace on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-trace
+          path: apps/web/test-results/
+          retention-days: 7

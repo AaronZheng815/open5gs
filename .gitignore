@@ -18,3 +18,8 @@ coverage/
 **/*.tsbuildinfo
 webui/.env
 .env
+
+# Playwright (frontend e2e)
+apps/web/test-results/
+apps/web/playwright-report/
+apps/web/blob-report/

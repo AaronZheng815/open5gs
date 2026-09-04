@@ -1,0 +1,4 @@
+nrf:
+  sbi:
+    server:
+      - address: 127.0.0.10

@@ -95,3 +95,51 @@ $ pgrep -f 'open5gs-amfd' && echo ACTIVE || echo DOWN
 - monitor 的 `:9090/metrics` 在 e2e 中用 mock，未对真实端口抓拍；真实抓拍作为 T-20 之外的可选人工对照。
 - lifecycle 的 `backupFile` 在 e2e 落到了作用域 `<tmp>/config-backup`，未污染真实 `OGS_CONFIG_DIR`。
 - AC-13（Subscriber CRUD 落库）留待 T-20 用 Playwright + Mongo 计数断言完成前端向。
+
+---
+
+## 7. T-20：前端 Playwright e2e（2026-09-05 完成）
+
+T-20 在**浏览器端**用 Playwright 补齐前端向：登录 → 主框架五模块（AC-10），资产/配置/生命周期主流程（AC-1/AC-8/AC-3/AC-5/AC-6），Subscriber CRUD 落库（AC-13）。与 T-19 后端 `inject` 口径不同，本段是**真浏览器 + 真实 Vite dev server + 真实后端进程**的端到端。
+
+### 7.1 环境 / seam
+
+- Playwright 配置：`apps/web/playwright.config.ts`（`testDir:'./e2e'`，单 chromium project，`workers:1`）
+- `globalSetup`/`globalTeardown`：清空**隔离库** `open5gs_nms_e2e` 并自建 admin（`hashPassword` 复用 server 端 `password.util`，PBKDF2 同源）；`startMockNrf` 起 h2c mock 让 `/api/nfs` 稳定 200。
+- `webServer`：后端 `pnpm start`（`nest start`）起在 :5000（env 注入 `MONGO_URI=<e2e库>`、`OGS_CONFIG_DIR=<fixture>`、`NRF_DISCOVERY_URL`、固定 `JWT_SECRET`）；前端 `vite --port 5173 --strictPort`。两个子进程都经 `proxyNeutral` 清空 6 个代理变量 + `NO_PROXY=localhost,127.0.0.1`（防止代理破坏 SBI/南向）。
+- **无副作用**：dry-run 只断言 diff 文案不点「确认落盘」；生命周期点「重启」后在 Modal.confirm **取消**，不清点确认（真实 `systemctl restart` 属受控破坏性动作，需人工授权）。Subscriber 断言对隔离库 `subscribers` 集合 `countDocuments(imsi)` 落库=1。
+- 浏览器下载：国内网络直连 `cdn.playwright.dev` 极慢（~33 KB/s），改走内网镜像 `PLAYWRIGHT_DOWNLOAD_HOST=https://cdn.npmmirror.com/binaries/playwright` + mihomo 代理，`chromium-headless-shell` 114.7 MiB 数秒下载完成。
+
+### 7.2 测试用例与验收结果
+
+| 文件 | 覆盖 AC | 断言要点 | 结果 |
+| --- | --- | --- | --- |
+| `e2e/login.spec.ts` | AC-10 | 登录成功 → URL `/assets` 且五模块可见；错误口令 → 停留 `/login` + `.ant-message` 提示 | PASS ×2 |
+| `e2e/shell.spec.ts` | AC-10 | 登录后主框架显示五个导航模块；`pageerror` 列表为空（无未捕获 JS 报错） | PASS |
+| `e2e/assets.spec.ts` | AC-1/AC-8 | 资产表渲染 amf/smf/nrf；「预期缺失」3 个 | PASS |
+| `e2e/config.spec.ts` | AC-3 | `getByLabel('amf.sbi.server[0].address')` 可见；改值后 dry-run 出「dry-run 预览：仅展示变更，未落盘」+「修改」标签；「确认落盘」于 diff 后启用（不清点真写） | PASS |
+| `e2e/lifecycle.spec.ts` | AC-5/AC-6 | 「网元生命周期」页 + `.ant-tag` 状态标签可见；点「重启」出二次确认正文「对 AMF 执行…」，取消则对话框关闭（不发真实 systemctl） | PASS |
+| `e2e/subscriber.spec.ts` | AC-13 | 新建 Subscriber（IMSI=`460111234560099`，K=`0011…eeff`）→ 列表出现该行 + Mongo `countDocuments` = 1 | PASS |
+
+汇总：`pnpm exec playwright test` → **7 passed**。
+
+### 7.3 调试点
+
+- **strict mode violation（lifecycle）**：AntD `Modal.confirm` 的「确认重启」同时作为对话框名（`.ant-modal-title`，隐藏 aria 锚点，`aria-labelledby` 指向）与可见标题（`.ant-modal-confirm-title`），`getByText('确认重启')` 命中 2 元素；`.first()` 又指到隐藏那个。改用二次确认**正文**（唯一且可见）断言，不再依赖 antd 内部类名。
+- **antd 汉字空格**：按钮文本「保存」渲染为「保 存」，所有按钮用正则 `/保\s*存/` 之类匹配。
+
+### 7.4 约束复核
+
+- e2e 全程不清点「确认落盘」、不清点「确认重启」，不触碰真实 NRF/`systemctl`/真实 `:9090`（只读 `pgrep`/只读 health 除外）。
+- `test-results/`、`playwright-report/` 已加入 `.gitignore`。
+- **CI 交付**（T-20 输出项）：新增 `.github/workflows/nms-console-web-e2e.yml` —— `ubuntu-latest` + `mongo:7` service + 根 `packageManager` pnpm@11.25.0，`pnpm install --frozen-lockfile` + `playwright install --with-deps chromium` + `pnpm --dir apps/web exec playwright test`；失败时 `upload-artifact` 上传 `test-results/` 追踪。仅触发于 `codex/nms-console` push 与 `master` PR，与 meson-ci / harness-gate 相互独立。（本仓库整体 CI 适配 GitHub 属另行立项，见 harness 消费门禁记录。）
+
+## 8. 全量 AC 覆盖小结
+
+| AC | 证据位置 | 类型 |
+| --- | --- | --- |
+| AC-1/AC-2/AC-3/AC-4/AC-5/AC-6/AC-7/AC-8/AC-9/AC-11/AC-12 | 后端 e2e（§4） | inject |
+| AC-10 | 前端 e2e `shell.spec.ts`（§7.2） | Playwright |
+| AC-13 | 前端 e2e `subscriber.spec.ts`（§7.2） | Playwright + Mongo 计数 |
+
+> 全部 AC 现均有可复现端到端证据；T-10（真实 systemctl 授权）与本机 NRF 真实连通仍未纳入自动化 e2e，属受控/依赖环境项。
