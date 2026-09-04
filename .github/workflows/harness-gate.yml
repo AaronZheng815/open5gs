@@ -1,0 +1,42 @@
+name: Harness Consumer Gate
+
+# 校验 Open5GS 对 xwy-harness-engineering 的消费,由 GitLab lite5gc-quality.yml
+# 适配而来。仅在仓库作为 harness 消费仓时保留;校验范围:
+#   (1) .harness submodule 固定到 HARNESS_EXPECTED_REF
+#   (2) SDD 资产结构(validate-sdd.sh)与生命周期(check-sdd-state.sh)通过
+#   (3) .cursorignore / .codexignore / .aiignore 边界文件存在
+# 不影响 Open5GS 自身的 编译/单测(详见 meson-ci.yml),只校验 harness 采纳。
+#
+# ⚠ 关键约束: .harness submodule 托管在内部 GitLab http://10.18.1.2:9999/...,
+#   GitHub 托管的 runner **无法访问**该地址。因此本 job 只有在能同时触达
+#   GitHub 与内部 GitLab 的 self-hosted runner(内网 runner)上才会通过;
+#   若使用 ubuntu-latest,会在 submodule 初始化处失败。请把 runs-on 改为你
+#   的自建 runner label(且已配置能与 10.18.1.2:9999 通信),或把 harness
+#   镜像到可公开访问的地址后改写 .gitmodules。
+
+on: [push, pull_request]
+
+env:
+  HARNESS_EXPECTED_REF: "v0.3.1"
+
+jobs:
+  harness-consumer-gate:
+    # 内网 runner 示例(能访问 10.18.1.2:9999 才可跑):
+    # runs-on: [self-hosted, linux, x64]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository with submodules
+        uses: actions/checkout@main
+        with:
+          submodules: recursive
+          fetch-depth: 0   # 拉全 history,便于 submodule pin 追溯
+      - name: Fetch harness submodule tags
+        # 门禁用 `git -C .harness tag --points-at HEAD` 校验 pin,需确保 tag 已拉取
+        run: |
+          git -C .harness fetch --tags --force origin \
+            || git -C .harness fetch --tags --force
+      - name: Run harness consumer quality gate
+        run: |
+          bash .harness/scripts/consumer-quality-gate.sh \
+            --repo "$GITHUB_WORKSPACE" \
+            --expected-ref "$HARNESS_EXPECTED_REF"

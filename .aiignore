@@ -1,0 +1,19 @@
+# 客户敏感数据
+configs/customer/
+configs/site-*/
+logs/
+captures/
+*.pcap
+*.pcapng
+
+# 凭据
+*.pem
+*.key
+*.crt
+secrets/
+.env
+.env.*
+
+# 内部未公开
+internal-spec/
+private-extensions/
