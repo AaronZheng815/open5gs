@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 13 |
+| `todo` | 12 |
 | `doing` | 0 |
-| `done` | 7 |
+| `done` | 8 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -152,14 +152,14 @@ updated_at: 2026-09-04
 - **输入**：T-3、T-2；EV-005；决策 2.5；§10 风险（写前备份）
 - **输出**：`apps/server/src/modules/config/{config.module,config.controller,config.service,diff.util,yaml.util,backup.util}.ts`，`readConfig()`、`applyConfig()`；`config-backup/*.yaml`（时间戳后缀）。
 - **完成判据**：
-  - [ ] `GET /api/nfs/{id}/config` 返回 200 与结构化 JSON，字段与目标 yaml 对应（AC-2）
-  - [ ] `?dry_run=true` 返回 200 + diff，目标配置文件 mtime/内容不变（不落盘断言，AC-3）
-  - [ ] `?dry_run=false` 返回 200 + diff，目标文件被写入，且 `config-backup/` 出现写前备份文件（AC-4）
-  - [ ] `pnpm test`（yaml 解析/diff/备份）通过且覆盖率 ≥ 80%
+  - [x] `GET /api/nfs/{id}/config` 返回 200 与结构化 JSON，字段与目标 yaml 对应（AC-2） — 实时 curl：HTTP 200，body `{"id":"amf","path":"…/amf.yaml","content":{"amf":{"sbi":{"server":[{"address":"127.0.0.5","port":7777}]}}}}`；未知网元 HTTP 404 `配置不存在：nope`（5b79a8c76）
+  - [x] `?dry_run=true` 返回 200 + diff，目标配置文件 mtime/内容不变（不落盘断言，AC-3） — 实时：HTTP 200 + diff `[{type:change,path:amf.sbi.server[0].address,before:127.0.0.5,after:127.0.0.9}]`，amf.yaml 内容/mtime 不变，config-backup 为空（5b79a8c76）
+  - [x] `?dry_run=false` 返回 200 + diff，目标文件被写入，且 `config-backup/` 出现写前备份文件（AC-4） — 实时：HTTP 200 + diff，amf.yaml 写入 `127.0.0.9`，`config-backup/amf-<ISO 时间戳>.yaml` 内容为写前 `127.0.0.5`（5b79a8c76）
+  - [x] `pnpm test`（yaml 解析/diff/备份）通过且覆盖率 ≥ 80% — 17 suites/85 passed；config 模块 coverage stmts 99.07 / branches 89.36 / lines 97.58；lint 0 / build 0（5b79a8c76）
 - **预估工时**：1d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：5b79a8c76
 
 ### T-9：lifecycle 模块（systemctl 编排 + 任务队列 + 状态 + 审计）
 
