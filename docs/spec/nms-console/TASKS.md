@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 9 |
+| `todo` | 8 |
 | `doing` | 0 |
-| `done` | 11 |
+| `done` | 12 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -215,13 +215,13 @@ updated_at: 2026-09-04
 - **输入**：T-4、T-9
 - **输出**：`apps/server/src/modules/audit/{audit.module,audit.controller,audit.service}.ts`；`GET /api/audits`、`GET /api/lifecycle-tasks`。
 - **完成判据**：
-  - [ ] `GET /api/audits` 返回审计日志列表（含操作者/动作/对象/时间/结果），支持分页
-  - [ ] `GET /api/lifecycle-tasks` 返回任务列表（含状态/动作/对象/创建时间）
-  - [ ] `pnpm test` 通过且覆盖率 ≥ 80%
+  - [x] `GET /api/audits` 返回审计日志列表（含操作者/动作/对象/时间/结果），支持分页 — live：HTTP 200 `{"items":[{"actor":"admin","action":"lifecycle:restart","target":"amf","result":"ok","ts":"2026-09-04T12:00:00.000Z"}],"total":1}`；`?page/pageSize/actor` 过滤生效；无 token 401（b2840902b）
+  - [x] `GET /api/lifecycle-tasks` 返回任务列表（含状态/动作/对象/创建时间） — live：HTTP 200 `{"items":[{"id":"6a9ad9df…","nfId":"amf","action":"restart","status":"queued","by":"admin","createdAt":"2026-09-04T12:00:00.000Z"}],"total":1}`；`?nfId=amf` 过滤生效；`_id`→`id` 映射（b2840902b）
+  - [x] `pnpm test` 通过且覆盖率 ≥ 80% — 23 suites/121 passed；audit 模块 coverage stmts 100 / branches 94.73 / funcs 100 / lines 100；全仓 stmts 97.77 / branches 81.88 / funcs 97.35 / lines 98.03；lint 0 / build 0（b2840902b）
 - **预估工时**：0.5d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：b2840902b
 
 ### T-13：前端脚手架 + 应用外壳（React19 + Vite + AntD + 路由 + 五大模块）
 
