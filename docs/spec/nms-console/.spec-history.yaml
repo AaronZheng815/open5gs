@@ -1,0 +1,9 @@
+history:
+    - at: "2026-09-04T12:42:25Z"
+      from: draft
+      to: review
+      by: sder
+    - at: "2026-09-04T12:56:15Z"
+      from: review
+      to: approved
+      by: sder
