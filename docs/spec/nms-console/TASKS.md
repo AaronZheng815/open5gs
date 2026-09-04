@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 4 |
+| `todo` | 3 |
 | `doing` | 0 |
-| `done` | 16 |
+| `done` | 17 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -292,13 +292,13 @@ updated_at: 2026-09-04
 - **输入**：T-13、T-10、T-11
 - **输出**：`apps/web/src/pages/monitor/monitor-page.tsx`（ECharts 图表）、`apps/web/src/pages/topology/topology-page.tsx`（G6 画布）、对应 hooks。
 - **完成判据**：
-  - [ ] 监控页渲染指标快照且「无指标」降级提示正确（AC-11）
-  - [ ] 拓扑页渲染 `GET /api/topology` 的节点与边，无渲染异常
-  - [ ] `pnpm test` 通过；`pnpm build` 成功
+  - [x] 监控页渲染指标快照且「无指标」降级提示正确（AC-11） — 页测试 available=true → chart 测试位 + 指标表 'open5gs_amf_connections'/'指标总数：2'；available=false → 「无指标」且无 chart（mock MetricsChart 隔离 canvas）；hook 测试 useMonitor available 透传；live：GET /api/metrics/amf/snapshot → available=true + 25 条指标（a8cbfd84f）
+  - [x] 拓扑页渲染 `GET /api/topology` 的节点与边，无渲染异常 — 页测试 G6 测试位 + '节点 2 个 / 连线 1 条' + 节点标签表；hook 测试 useTopology 返回 nodes/edges；live：GET /api/topology → 16 nodes / 22 edges（a8cbfd84f）
+  - [x] `pnpm test` 通过；`pnpm build` 成功 — vitest 14 files/32 passed（useMonitor 3 + monitor-page 2 + topology-page 1）；eslint 0；build (tsc+vite) 0，echarts+g6 类型校验通过（a8cbfd84f）
 - **预估工时**：0.5d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：a8cbfd84f
 
 ### T-18：前端 Subscriber/Profile/Account 三 CRUD 页平移
 
