@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 11 |
+| `todo` | 10 |
 | `doing` | 0 |
-| `done` | 9 |
+| `done` | 10 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -184,14 +184,14 @@ updated_at: 2026-09-04
 - **输入**：T-3、T-2；EV-003、EV-004
 - **输出**：`apps/server/src/modules/monitor/{monitor.module,monitor.controller,monitor.service,metrics.parser,info-api.client}.ts`；返回快照 DTO。
 - **完成判据**：
-  - [ ] `GET /api/metrics/{nf}/snapshot` 对开启 `:9090` 的网元返回 200、指标非空、可解析（如 AMF）
-  - [ ] 对未开启 `:9090` 的网元返回 200 且降级字段标注"无指标"（不 500）
-  - [ ] Prometheus text 解析器单测覆盖 gauge/counter/label 解析；Info API pager 语义正确处理
-  - [ ] `pnpm test` 通过且覆盖率 ≥ 80%
+  - [x] `GET /api/metrics/{nf}/snapshot` 对开启 `:9090` 的网元返回 200、指标非空、可解析（如 AMF） — live：AMF 返回 HTTP 200 + available=true + 25 条指标（gnb/fivegs_amffunction_*），ue-info 含真实注册 IMSI 460111234560001（5473e6f64）
+  - [x] 对未开启 `:9090` 的网元返回 200 且降级字段标注"无指标"（不 500） — live：NRF（无 :9090）返回 HTTP 200 + `{"available":false,"metrics":[]}`（5473e6f64）
+  - [x] Prometheus text 解析器单测覆盖 gauge/counter/label 解析；Info API pager 语义正确处理 — metrics.parser.spec 4 用例（含 label/timestamp/畸形跳过）；info-api pager 聚合 `{items,pager}` 跨页 + 数组形态 + 非 JSON 降级（5473e6f64）
+  - [x] `pnpm test` 通过且覆盖率 ≥ 80% — 21 suites/111 passed；monitor 模块 coverage stmts 96.39 / branches 87.5 / funcs 94.44 / lines 97.8；lint 0 / build 0（5473e6f64）
 - **预估工时**：0.5d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：5473e6f64
 
 ### T-11：topology 模块（节点 + 边）
 
