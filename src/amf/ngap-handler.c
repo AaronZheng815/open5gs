@@ -2818,10 +2818,24 @@ void ngap_handle_pdu_session_resource_release_response(
         }
 
         memset(&param, 0, sizeof(param));
+        param.n2SmInfoType = OpenAPI_n2_sm_info_type_PDU_RES_REL_RSP;
         param.n2smbuf = ogs_pkbuf_alloc(NULL, OGS_MAX_SDU_LEN);
         ogs_assert(param.n2smbuf);
-        param.n2SmInfoType = OpenAPI_n2_sm_info_type_PDU_RES_REL_RSP;
-        ogs_pkbuf_put_data(param.n2smbuf, transfer->buf, transfer->size);
+        if (transfer->size > 0) {
+            ogs_pkbuf_put_data(param.n2smbuf, transfer->buf, transfer->size);
+        } else {
+            /*
+             * The gNB confirmed the N2 resources are released but carried an
+             * empty PDUSessionResourceReleaseResponseTransfer. The SMF's
+             * PDU_RES_REL_RSP handler does not inspect the transfer content,
+             * but the SBI layer rejects a zero-length part (ogs_pkbuf_copy),
+             * so emit a single-byte placeholder purely to keep the part valid.
+             */
+            uint8_t placeholder = 0;
+            ogs_pkbuf_put_data(param.n2smbuf, &placeholder, 1);
+            ogs_warn("Empty PDUSessionResourceReleaseResponseTransfer - "
+                    "using placeholder");
+        }
 
         r = amf_sess_sbi_discover_and_send(
                 OpenAPI_service_name_nsmf_pdusession, NULL,

@@ -331,7 +331,13 @@ ogs_sbi_request_t *amf_nsmf_pdusession_build_update_sm_context(
 
     message.num_of_part = 0;
 
-    if (param->n1smbuf) {
+    /*
+     * Only append a N1/N2 part when it actually carries bytes. The SBI
+     * layer refuses a zero-length part (ogs_pkbuf_copy rejects size == 0),
+     * so an empty pkbuf must be skipped rather than encoded as an empty
+     * part that the peer cannot parse.
+     */
+    if (param->n1smbuf && param->n1smbuf->len > 0) {
         n1SmMsg.content_id = (char *)OGS_SBI_CONTENT_5GNAS_SM_ID;
         SmContextUpdateData.n1_sm_msg = &n1SmMsg;
 
@@ -343,7 +349,7 @@ ogs_sbi_request_t *amf_nsmf_pdusession_build_update_sm_context(
         message.num_of_part++;
     }
 
-    if (param->n2smbuf) {
+    if (param->n2smbuf && param->n2smbuf->len > 0) {
         if (!param->n2SmInfoType) {
             ogs_error("No n2SmInfoType");
             goto end;

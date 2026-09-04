@@ -3464,6 +3464,17 @@ cleanup:
 
         CASE(OGS_SBI_CONTENT_5GNAS_TYPE)
         CASE(OGS_SBI_CONTENT_NGAP_TYPE)
+            if (data.part[i].content_length == 0) {
+                /* Drop an empty N1/N2 part instead of building a zero-length
+                 * part that ogs_pkbuf_copy() rejects as size=0. */
+                if (data.part[i].content_id)
+                    ogs_free(data.part[i].content_id);
+                if (data.part[i].content_type)
+                    ogs_free(data.part[i].content_type);
+                if (data.part[i].content)
+                    ogs_free(data.part[i].content);
+                break;
+            }
             http->part[http->num_of_part].content_id =
                 data.part[i].content_id;
             http->part[http->num_of_part].content_type =
