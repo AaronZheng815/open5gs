@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 5 |
+| `todo` | 4 |
 | `doing` | 0 |
-| `done` | 15 |
+| `done` | 16 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -276,14 +276,14 @@ updated_at: 2026-09-04
 - **输入**：T-13、T-9、T-12
 - **输出**：`apps/web/src/pages/lifecycle/lifecycle-page.tsx`、`apps/web/src/hooks/useLifecycle.ts`、二次确认 Modal、`GET /api/audits`+`/api/lifecycle-tasks` 展示组件。
 - **完成判据**：
-  - [ ] 触发 restart 前弹出二次确认，确认后调用 API 并展示返回的 202 + task id（AC-5）
-  - [ ] 生命周期状态列与后端 status 一致（AC-6）
-  - [ ] 任务历史/审计列表可展示（AC-12）
-  - [ ] `pnpm test` 通过；`pnpm build` 成功
+  - [x] 触发 restart 前弹出二次确认，确认后调用 API 并展示返回的 202 + task id（AC-5） — 页面测试点击「重启」→ dialog「确认重启」→ 确认后 `api.lifecycleAction('amf','restart')` + Alert「task id=TASK123」；hook 测试 useLifecycleAction 触发 (id,action)（1dae25f82）
+  - [x] 生命周期状态列与后端 status 一致（AC-6） — 页面测试 inactive → Tag「离线」；hook 测试 status 'active'→「active」；live：GET /api/nfs/amf/lifecycle → `"inactive"`（与页面 inactive→离线映射一致）（1dae25f82）
+  - [x] 任务历史/审计列表可展示（AC-12） — 页面测试 lifecycle-tasks 行 status 'succeeded' + audits 行 action 'lifecycle:restart' 可渲染；hook 测试 useLifecycleTasks/useAudits 返回 {items,total}（1dae25f82）
+  - [x] `pnpm test` 通过；`pnpm build` 成功 — vitest 11 files/26 passed（useLifecycle 3 + lifecycle-page 3）；eslint 0；build (tsc+vite) 0（1dae25f82）
 - **预估工时**：0.5d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：1dae25f82
 
 ### T-17：前端监控 + 拓扑页（ECharts + AntV G6）
 
