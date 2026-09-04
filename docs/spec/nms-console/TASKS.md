@@ -7,7 +7,7 @@ branch: codex/nms-console
 target_branch: master
 merge_method: no_squash
 created_at: 2026-09-04
-updated_at: 2026-09-04
+updated_at: 2026-09-05
 ---
 
 # Tasks: NMS Console V1 — 网元资产发现与配置/生命周期管理
@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 1 |
+| `todo` | 0 |
 | `doing` | 0 |
-| `done` | 19 |
+| `done` | 20 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -340,14 +340,14 @@ updated_at: 2026-09-04
 - **输入**：T-14、T-15、T-16、T-18
 - **输出**：`apps/web/e2e/{login.spec,shell.spec,assets.spec,config.spec,lifecycle.spec,subscriber.spec}.ts`；Playwright 配置与 CI 任务。
 - **完成判据**：
-  - [ ] 登录后主框架显示五模块且无浏览器 console 报错（AC-10）
-  - [ ] 资产/配置/生命周期流程断言通过（含 dry-run diff、二次确认）
-  - [ ] Subscriber CRUD 完成后 Mongo DB 计数断言成立（AC-13）
-  - [ ] `pnpm exec playwright test` 全绿
+  - [x] 登录后主框架显示五模块且无浏览器 console 报错（AC-10）
+  - [x] 资产/配置/生命周期流程断言通过（含 dry-run diff、二次确认）
+  - [x] Subscriber CRUD 完成后 Mongo DB 计数断言成立（AC-13）
+  - [x] `pnpm exec playwright test` 全绿
 - **预估工时**：1d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：7cc4610c1
 
 ## 任务依赖图
 
