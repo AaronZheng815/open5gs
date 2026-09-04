@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 12 |
+| `todo` | 11 |
 | `doing` | 0 |
-| `done` | 8 |
+| `done` | 9 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -168,14 +168,14 @@ updated_at: 2026-09-04
 - **输入**：T-3、T-2、T-4；EV-006；决策 2.4；PLAN §7 状态机
 - **输出**：`apps/server/src/modules/lifecycle/{lifecycle.module,lifecycle.controller,lifecycle.service,task.queue,status.util,backup.util}.ts`；`lifecycle_tasks` 记录；`audit_logs` 写入。
 - **完成判据**：
-  - [ ] `POST /api/nfs/{id}/lifecycle/restart` 返回 202 + task id，并实际触发对应 systemd 单元（mock child_process 断言命令与参数）
-  - [ ] `GET /api/nfs/{id}/lifecycle` 返回状态与 `systemctl is-active` 输出一致（集成 + 对照断言）
-  - [ ] 每次写操作在 `audit_logs` 生成一条（操作者/动作/对象/时间/结果）；任务在 `lifecycle_tasks` 记录并可查询
-  - [ ] `pnpm test` 通过且覆盖率 ≥ 80%
+  - [x] `POST /api/nfs/{id}/lifecycle/restart` 返回 202 + task id，并实际触发对应 systemd 单元（mock child_process 断言命令与参数） — live：POST 返回 202 + `{"taskId":"6a9ad5f2c711427f980cb72d"}`，单测断言 exec 收到 `systemctl restart open5gs-amfd`（cfe2c533a）
+  - [x] `GET /api/nfs/{id}/lifecycle` 返回状态与 `systemctl is-active` 输出一致（集成 + 对照断言） — live：GET 返回 `inactive`，与真实 `systemctl is-active open5gs-amfd` 输出 `inactive` 一致（cfe2c533a）
+  - [x] 每次写操作在 `audit_logs` 生成一条（操作者/动作/对象/时间/结果）；任务在 `lifecycle_tasks` 记录并可查询 — live：`lifecycle_tasks` 任务 Queued→failed，`audit_logs` 一条 actor=admin/action=lifecycle:restart/target=amf/result=错误+ts（cfe2c533a）
+  - [x] `pnpm test` 通过且覆盖率 ≥ 80% — 19 suites/99 passed；lifecycle 模块 coverage stmts 100 / branches 80.64 / lines 100；lint 0 / build 0（cfe2c533a）
 - **预估工时**：1d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：cfe2c533a
 
 ### T-10：monitor 模块（:9090/metrics + Info API 快照）
 
