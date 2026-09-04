@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 2 |
+| `todo` | 1 |
 | `doing` | 0 |
-| `done` | 18 |
+| `done` | 19 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -322,14 +322,16 @@ updated_at: 2026-09-04
 - **输入**：T-7、T-8、T-9、T-10、T-11、T-12
 - **输出**：`apps/server/test/{asset.e2e-spec,config.e2e-spec,lifecycle.e2e-spec,monitor.e2e-spec,topology.e2e-spec,audit.e2e-spec}.ts`；`docs/study/nms-console-e2e.md`（curl/systemctl 对照记录）。
 - **完成判据**：
-  - [ ] config dry-run 不落盘、dry-run=false 落盘+backup 断言成立（AC-3/AC-4）
-  - [ ] lifecycle restart 触发 + 202 + 状态与 `systemctl is-active` 一致（AC-5/AC-6）
-  - [ ] NRF 不可达 503、inventory 无 NRF 200、topology 节点边、metrics 快照、审计入库全部通过（AC-7/8/9/11/12）
-  - [ ] `pnpm test:e2e` 通过
+  - [x] config dry-run 不落盘、dry-run=false 落盘+backup 断言成立（AC-3/AC-4）
+  - [x] lifecycle restart 触发 + 202 + 状态与 `systemctl is-active` 一致（AC-5/AC-6，mock exec + 进程存活对照，见 §T-19 备注）
+  - [x] NRF 不可达 503、inventory 无 NRF 200、topology 节点边、metrics 快照、审计入库全部通过（AC-7/8/9/11/12）
+  - [x] `pnpm test:e2e` 通过（7 suites / 24 tests）＋ 单测 121 passed + lint 0 warning
 - **预估工时**：1d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：`751d44c7a`
+
+> 备注（AC-6 折中）：本机 Open5GS 以裸进程运行无 systemd unit，无法直接 `systemctl is-active`。经用户确认采用「mock exec + 进程存活对照」：功能路径用注入 mockExec 验证 202/落库/审计，真实对照以 `pgrep -f open5gs-<nf>d` 命中与否映射 active/unknown（只读无副作用；真实启动/停止仍需人工授权）。详见 `docs/study/nms-console-e2e.md`。
 
 ### T-20：前端 Playwright e2e（登录→主框架 + 资产/配置/生命周期流 + Subscriber CRUD）
 
