@@ -11,6 +11,7 @@ import type {
   NfAssetList,
 } from '@open5gs/shared';
 import type { TopologyGraph } from '@open5gs/shared';
+import type { SubscriberRow, ProfileRow, AccountRow } from '../pages/data/rows';
 import { useAuthStore } from '../store/auth-store';
 
 const BASE = '/api';
@@ -31,7 +32,13 @@ async function http<T>(path: string, opts: RequestInit = {}): Promise<T> {
     const text = await res.text();
     throw new Error(text || `HTTP ${res.status}`);
   }
-  return res.json() as Promise<T>;
+  const text = await res.text();
+  if (!text) return undefined as T; // 空 200（如 DELETE 返回 void）
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    return text as unknown as T;
+  }
 }
 
 export const api = {
@@ -70,5 +77,50 @@ export const api = {
   },
   topology(): Promise<TopologyGraph> {
     return http<TopologyGraph>('/topology');
+  },
+  listSubscribers(): Promise<SubscriberRow[]> {
+    return http<SubscriberRow[]>('/subscribers');
+  },
+  createSubscriber(body: Record<string, unknown>): Promise<SubscriberRow> {
+    return http<SubscriberRow>('/subscribers', { method: 'POST', body: JSON.stringify(body) });
+  },
+  updateSubscriber(imsi: string, body: Record<string, unknown>): Promise<SubscriberRow> {
+    return http<SubscriberRow>(`/subscribers/${encodeURIComponent(imsi)}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+  },
+  deleteSubscriber(imsi: string): Promise<void> {
+    return http<void>(`/subscribers/${encodeURIComponent(imsi)}`, { method: 'DELETE' });
+  },
+  listProfiles(): Promise<ProfileRow[]> {
+    return http<ProfileRow[]>('/profiles');
+  },
+  createProfile(body: Record<string, unknown>): Promise<ProfileRow> {
+    return http<ProfileRow>('/profiles', { method: 'POST', body: JSON.stringify(body) });
+  },
+  updateProfile(title: string, body: Record<string, unknown>): Promise<ProfileRow> {
+    return http<ProfileRow>(`/profiles/${encodeURIComponent(title)}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+  },
+  deleteProfile(title: string): Promise<void> {
+    return http<void>(`/profiles/${encodeURIComponent(title)}`, { method: 'DELETE' });
+  },
+  listAccounts(): Promise<AccountRow[]> {
+    return http<AccountRow[]>('/accounts');
+  },
+  createAccount(body: Record<string, unknown>): Promise<AccountRow> {
+    return http<AccountRow>('/accounts', { method: 'POST', body: JSON.stringify(body) });
+  },
+  updateAccount(username: string, body: Record<string, unknown>): Promise<AccountRow> {
+    return http<AccountRow>(`/accounts/${encodeURIComponent(username)}`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    });
+  },
+  deleteAccount(username: string): Promise<void> {
+    return http<void>(`/accounts/${encodeURIComponent(username)}`, { method: 'DELETE' });
   },
 };

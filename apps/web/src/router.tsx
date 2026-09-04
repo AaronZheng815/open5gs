@@ -6,6 +6,7 @@ import { TopologyPage } from './pages/topology';
 import { MonitorPage } from './pages/monitor';
 import { ConfigPage } from './pages/config';
 import { AuditPage } from './pages/audit';
+import { DataPage } from './pages/data';
 
 /** 路由（React Router 7）：/login + 受保护主框架（五大模块子路由）。 */
 export const router = createBrowserRouter([
@@ -20,6 +21,7 @@ export const router = createBrowserRouter([
       { path: 'monitor', element: <MonitorPage /> },
       { path: 'config', element: <ConfigPage /> },
       { path: 'audit', element: <AuditPage /> },
+      { path: 'data', element: <DataPage /> },
     ],
   },
 ]);
