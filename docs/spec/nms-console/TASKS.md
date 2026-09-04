@@ -4,7 +4,7 @@ spec: SPEC.md
 plan: PLAN.md
 status: in_progress
 branch: codex/nms-console
-target_branch: master
+target_branch: main
 merge_method: no_squash
 created_at: 2026-09-04
 updated_at: 2026-09-05
@@ -26,7 +26,7 @@ updated_at: 2026-09-05
 ## 交付策略
 
 - **工作分支**：`codex/nms-console`
-- **目标分支**：`master`
+- **目标分支**：`main`
 - **执行模式**：Guarded Auto（TASKS approved 后自动执行 pending tasks；命中 high-risk gate 时暂停请示）
 - **MR 粒度**：final only（所有 tasks done 后创建一个 MR）
 - **合并方式**：no squash（保留每个 task commit）

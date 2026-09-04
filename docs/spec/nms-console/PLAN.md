@@ -2,7 +2,7 @@
 plan_id: open5gs-nms-console
 spec: SPEC.md
 analysis: REQUIREMENT_ANALYSIS.md
-status: draft
+status: approved
 owner: sder
 reviewers:
   - sder
