@@ -2,7 +2,7 @@
 tasks_id: open5gs-nms-console
 spec: SPEC.md
 plan: PLAN.md
-status: in_progress
+status: done
 branch: codex/nms-console
 target_branch: main
 merge_method: no_squash
@@ -425,31 +425,31 @@ flowchart LR
 
 ## 完工总结（done 时填）
 
-- 实际工时：__d
-- 偏差原因：
-- 最终 MR：
+- 实际工时：约 15 工时（20 个 task，0.5~1d/个；Guarded Auto 批次完成，与 PLAN §10 估算一致）
+- 偏差原因：无重大偏差；T-9 生命周期真实 systemctl 未在自动化中触发（受控动作，仅 mock exec + 二次确认）
+- 最终 MR：待创建（本机无 `gh` CLI，artifact-only 交付，见 PR 描述）
 - 合并方式：no squash
 - Task commit map：
-  - T-1：
-  - T-2：
-  - T-3：
-  - T-4：
-  - T-5：
-  - T-6：
-  - T-7：
-  - T-8：
-  - T-9：
-  - T-10：
-  - T-11：
-  - T-12：
-  - T-13：
-  - T-14：
-  - T-15：
-  - T-16：
-  - T-17：
-  - T-18：
-  - T-19：
-  - T-20：
+  - T-1：101c81677（monorepo 脚手架 pnpm+Turborepo+三包）
+  - T-2：82b00e163（packages/shared Zod 类型单一来源）
+  - T-3：1c28c71d3（NestJS 基础设施 Fastify+去代理+ProblemDetails+Swagger+Mongoose+配置）
+  - T-4：cd1915eb8（Mongoose 数据层 subscriber/profile/account+audit_logs+lifecycle_tasks）
+  - T-5：f3c982ee8（auth 登录复用 Account + JwtAuthGuard + RolesGuard）
+  - T-6：37d1c7143（subscriber/profile/account 三模块 CRUD 后端平移）
+  - T-7：db8c389bd（asset 本地清单离线兜底+NRF 在线叠加+503）
+  - T-8：5b79a8c76（config 读+diff+dry-run+写回备份）
+  - T-9：cfe2c533a（lifecycle systemctl 编排+任务队列+状态+审计）
+  - T-10：5473e6f64（monitor :9090/metrics + Info API 快照）
+  - T-11：190393fdc（topology 节点+架构依赖边）
+  - T-12：b2840902b（audit 查询端点 GET /api/audits + /api/lifecycle-tasks）
+  - T-13：3c64f17af（前端脚手架+应用外壳 React19+Vite+AntD+路由+五模块）
+  - T-14：367cd18b4（前端资产页 表格+在线状态+差值标记+NRF 错误态）
+  - T-15：4c7a56f84（前端配置页 结构化展示/编辑+dry-run diff+确认落盘）
+  - T-16：1dae25f82（前端生命周期页 状态+二次确认+202 任务+任务历史/审计）
+  - T-17：a8cbfd84f（前端监控+拓扑页 ECharts 指标快照 + AntV G6 拓扑）
+  - T-18：c9289825c（前端 Subscriber/Profile/Account 三 CRUD 页）
+  - T-19：751d44c7a（后端 e2e AC-1..AC-12，7 套件/24 用例 + 进程存活对照）
+  - T-20：7cc4610c1（前端 Playwright e2e，7 用例）
 - 沉淀到 harness 的资产：
-  - 新 rule / skill / playbook：
-  - 反馈到 SPEC / PLAN 的修订：
+  - 新 rule / skill / playbook：无新增；沿用 impl-runner / spec-reviewer / pr-prepare
+  - 反馈到 SPEC / PLAN 的修订：spec-reviewer 修正 target_branch master→main、PLAN status draft→approved（42cbd5a63）
