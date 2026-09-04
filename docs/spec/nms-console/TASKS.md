@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 6 |
+| `todo` | 5 |
 | `doing` | 0 |
-| `done` | 14 |
+| `done` | 15 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -261,13 +261,13 @@ updated_at: 2026-09-04
 - **输入**：T-13、T-8
 - **输出**：`apps/web/src/pages/config/config-page.tsx`、`apps/web/src/hooks/useConfig.ts`、diff 展示组件（AntD `diff`/高亮）、dry-run Modal。
 - **完成判据**：
-  - [ ] 加载某网元配置并结构化展示（AC-2）
-  - [ ] 编辑后点 dry-run 展示 diff 且未落盘（AC-3）；确认落盘成功且显示 diff（AC-4）
-  - [ ] `pnpm test`（表单校验 + dry-run 流程）通过；`pnpm build` 成功
+  - [x] 加载某网元配置并结构化展示（AC-2） — 页面测试 `findByLabelText('amf.sbi.server[0].address')` 值 '127.0.0.5'；live：GET /api/nfs/amf/config 200 返回结构化 content（4c7a56f84）
+  - [x] 编辑后点 dry-run 展示 diff 且未落盘（AC-3）；确认落盘成功且显示 diff（AC-4） — 页面测试断言 applyConfig(…, true) 一次（diff '127.0.0.5 → 127.0.0.9'、`未落盘` 文案），再断言 applyConfig(…, false)（`已落盘` + diff）；（4c7a56f84）live：POST dry_run=true 文件 sha1 不变显 diff；POST 落盘后文件写为 127.0.0.9 且 config-backup 生成写前备份
+  - [x] `pnpm test`（表单校验 + dry-run 流程）通过；`pnpm build` 成功 — vitest 9 files/20 passed（含 config-fields 3 + useConfig 2 + config-page 3）；eslint 0；build (tsc+vite) 0；live 三 AC 全过（4c7a56f84）
 - **预估工时**：1d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：4c7a56f84
 
 ### T-16：前端生命周期页（操作 + 二次确认 + 状态 + 任务历史）
 
