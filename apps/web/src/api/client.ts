@@ -7,8 +7,10 @@ import type {
   LifecycleTaskList,
   LoginRequest,
   LoginResponse,
+  MetricSnapshot,
   NfAssetList,
 } from '@open5gs/shared';
+import type { TopologyGraph } from '@open5gs/shared';
 import { useAuthStore } from '../store/auth-store';
 
 const BASE = '/api';
@@ -62,5 +64,11 @@ export const api = {
   },
   audits(): Promise<AuditLogList> {
     return http<AuditLogList>('/audits');
+  },
+  metricsSnapshot(nf: string): Promise<MetricSnapshot> {
+    return http<MetricSnapshot>(`/metrics/${nf}/snapshot`);
+  },
+  topology(): Promise<TopologyGraph> {
+    return http<TopologyGraph>('/topology');
   },
 };
