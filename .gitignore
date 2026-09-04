@@ -8,3 +8,13 @@ subprojects/usrsctp
 subprojects/.wraplock
 
 webui/.next
+
+# NMS Console app (pnpm + Turborepo)
+node_modules/
+dist/
+build/
+coverage/
+.turbo/
+**/*.tsbuildinfo
+webui/.env
+.env
