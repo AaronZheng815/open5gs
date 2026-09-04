@@ -10,6 +10,7 @@ import { ProfileModule } from './modules/profile/profile.module';
 import { AccountModule } from './modules/account/account.module';
 import { AssetModule } from './modules/asset/asset.module';
 import { ConfigModule as NmsConfigModule } from './modules/config/config.module';
+import { LifecycleModule } from './modules/lifecycle/lifecycle.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ConfigModule as NmsConfigModule } from './modules/config/config.module'
     AccountModule,
     AssetModule,
     NmsConfigModule,
+    LifecycleModule,
   ],
   controllers: [AppController],
   providers: [AppService],
