@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 17 |
+| `todo` | 16 |
 | `doing` | 0 |
-| `done` | 3 |
+| `done` | 4 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -88,14 +88,14 @@ updated_at: 2026-09-04
 - **输入**：T-3；基线 §6 数据模型；PLAN §6 数据模型
 - **输出**：`apps/server/src/db/{subscriber,profile,account,audit-log,lifecycle-task}.schema.ts`（Mongoose Schema/装饰器），以及对应 Repository/service 的 CRUD 基础方法。
 - **完成判据**：
-  - [ ] 访问既有集合不报 schema 冲突；`subscribers` 集合数据可被读回（与现有 webui 一致）
-  - [ ] `audit_logs`/`lifecycle_tasks` 集合可通过 mongoose 建库，索引创建成功（`db.collection.getIndexes()` 校验）
-  - [ ] 数据层单测断言 CRUD 基本方法与索引
-  - [ ] `pnpm test` 通过且覆盖率 ≥ 80%
+  - [x] 访问既有集合不报 schema 冲突；`subscribers` 集合数据可被读回（与现有 webui 一致）— 实时验证 readback imsi=460001234560001，字段含 mme_host/purge_flag/access_restriction_data/security.sqn/…（cd1915eb8）
+  - [x] `audit_logs`/`lifecycle_tasks` 集合可通过 mongoose 建库，索引创建成功（`db.collection.getIndexes()` 校验）— dist 实时 ensureIndexes → audit_logs indexes `[{_id:1},{actor:1,ts:-1}]`、lifecycle_tasks `[{_id:1},{nfId:1,createdAt:-1}]`（cd1915eb8）
+  - [x] 数据层单测断言 CRUD 基本方法与索引 — db.schemas.spec.ts(6)+db.repositories.spec.ts(6)=18 断言（cd1915eb8）
+  - [x] `pnpm test` 通过且覆盖率 ≥ 80% — 18 passed；coverage stmts 98.31/lines 97.93/funcs 92.3（cd1915eb8）
 - **预估工时**：0.5d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：cd1915eb8
 
 ### T-5：auth 模块（登录复用 Account + JwtAuthGuard + RolesGuard）
 
