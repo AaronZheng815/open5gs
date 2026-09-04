@@ -29,4 +29,7 @@ export const api = {
   inventory(): Promise<NfAssetList> {
     return http<NfAssetList>('/inventory');
   },
+  nfs(): Promise<NfAssetList> {
+    return http<NfAssetList>('/nfs');
+  },
 };
