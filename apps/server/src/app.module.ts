@@ -9,6 +9,7 @@ import { SubscriberModule } from './modules/subscriber/subscriber.module';
 import { ProfileModule } from './modules/profile/profile.module';
 import { AccountModule } from './modules/account/account.module';
 import { AssetModule } from './modules/asset/asset.module';
+import { ConfigModule as NmsConfigModule } from './modules/config/config.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AssetModule } from './modules/asset/asset.module';
     ProfileModule,
     AccountModule,
     AssetModule,
+    NmsConfigModule,
   ],
   controllers: [AppController],
   providers: [AppService],
