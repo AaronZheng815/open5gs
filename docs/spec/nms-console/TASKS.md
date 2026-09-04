@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 18 |
+| `todo` | 17 |
 | `doing` | 0 |
-| `done` | 2 |
+| `done` | 3 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -78,8 +78,8 @@ updated_at: 2026-09-04
   - [ ] `pnpm test`（infra 单测）通过且覆盖率 ≥ 80%
 - **预估工时**：1d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：1c28c71d3
 
 ### T-4：Mongoose 数据层（subscriber/profile/account 复用 + audit_logs + lifecycle_tasks）
 
