@@ -18,9 +18,9 @@ updated_at: 2026-09-04
 
 | 状态 | 数量 |
 | --- | --- |
-| `todo` | 10 |
+| `todo` | 9 |
 | `doing` | 0 |
-| `done` | 10 |
+| `done` | 11 |
 | `blocked` | 0 |
 
 ## 交付策略
@@ -200,13 +200,13 @@ updated_at: 2026-09-04
 - **输入**：T-3、T-7；基线 §2 架构图依赖边；EV-005
 - **输出**：`apps/server/src/modules/topology/{topology.module,topology.controller,topology.service,edges.map}.ts`；返回 `{nodes:[], edges:[{source,target,label}]}`。
 - **完成判据**：
-  - [ ] 响应含节点与边集合；关键边（AMF→NRF、SMF→UPF、SMF→PCF、MME→HSS）存在
-  - [ ] 节点 id 与 `GET /api/nfs` / `GET /api/inventory` 资产 id 一致（可关联）
-  - [ ] `pnpm test` 通过且覆盖率 ≥ 80%
+  - [x] 响应含节点与边集合；关键边（AMF→NRF、SMF→UPF、SMF→PCF、MME→HSS）存在 — live：`/usr/local/etc/open5gs` 实库返回 16 节点/22 边，关键边 amf→nrf/smf→upf/smf→pcf/mme→hss 均 true（190393fdc）；单测 edges.map + buildTopology 断言4例
+  - [x] 节点 id 与 `GET /api/nfs` / `GET /api/inventory` 资产 id 一致（可关联） — live：节点 id = 16 网元 `["amf","ausf","bsf","hss","mme","nrf","nssf","pcf","pcrf","scp","sgwc","sgwu","smf","udm","udr","upf"]`，与 inventory 资产 id 一致；单测断言 7 网元 scoped 图节点 id 与资产 id 对等（190393fdc）
+  - [x] `pnpm test` 通过且覆盖率 ≥ 80% — 23 suites/115 passed；topology 模块 coverage stmts 100 / branches 75 / funcs 100 / lines 100；全仓 stmts 97.64 / branches 80.6 / funcs 97.15 / lines 97.91；lint 0 / build 0（190393fdc）
 - **预估工时**：0.5d
 - **责任人**：sder
-- **状态**：`todo`
-- **Commit**：完成后填
+- **状态**：`done`
+- **Commit**：190393fdc
 
 ### T-12：audit 查询端点（GET /api/audits + /api/lifecycle-tasks）
 
