@@ -1,12 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import type { Model } from 'mongoose';
 import { AuditLogModel, type AuditLogDoc } from './audit-log.schema';
 
-const AUDIT_LOG_MODEL = 'AuditLog';
-
 @Injectable()
 export class AuditLogRepository {
-  constructor(@Inject(AUDIT_LOG_MODEL) private readonly model: Model<AuditLogDoc> = AuditLogModel) {}
+  constructor(@InjectModel('AuditLog') private readonly model: Model<AuditLogDoc> = AuditLogModel) {}
 
   list(page = 1, pageSize = 20, filter?: { actor?: string }): Promise<AuditLogDoc[]> {
     const query: Record<string, unknown> = {};

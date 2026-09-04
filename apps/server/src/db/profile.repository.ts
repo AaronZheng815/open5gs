@@ -1,12 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import type { Model } from 'mongoose';
 import { ProfileModel, type ProfileDoc } from './profile.schema';
 
-const PROFILE_MODEL = 'Profile';
-
 @Injectable()
 export class ProfileRepository {
-  constructor(@Inject(PROFILE_MODEL) private readonly model: Model<ProfileDoc> = ProfileModel) {}
+  constructor(@InjectModel('Profile') private readonly model: Model<ProfileDoc> = ProfileModel) {}
 
   findAll(): Promise<ProfileDoc[]> {
     return this.model.find().lean().exec();
